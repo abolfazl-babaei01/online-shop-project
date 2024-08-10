@@ -33,7 +33,7 @@ This is a Django online shop allowing users to browse, search, and purchase prod
 git clone https://github.com/abolfazl-babaei01/online-shop-project.git
 
 # Navigate to the project directory
-cd shop
+cd online-shop-project
 
 # Create and activate a virtual environment
 python3 -m venv env
