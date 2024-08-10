@@ -30,7 +30,7 @@ This is a Django online shop allowing users to browse, search, and purchase prod
 ## Installation & Setup
 ```bash
 # Clone the repository
-git clone https://github.com/abolfazl-babaei01/online-shop.git
+git clone https://github.com/abolfazl-babaei01/online-shop-project.git
 
 # Navigate to the project directory
 cd shop
