@@ -1,0 +1,25 @@
+{% extends 'parent/base.html' %}
+
+{% block title %}
+    create order
+{% endblock %}
+
+{% block content %}
+    <div class="order-container">
+        <h2>فرم سفارش</h2>
+        <form method="post" class="order-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" value="تائید">
+        </form>
+        {% include 'partials/messages.html' %}
+
+        <div class="selected-items">
+            <h2>محصولات انتخاب شده</h2>
+            {% for item in cart %}
+                <p>{{ item.product.name }} x {{ item.quantity }} - {{ item.price }}</p>
+            {% endfor %}
+        </div>
+    </div>
+
+{% endblock %}

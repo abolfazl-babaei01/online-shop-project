@@ -1,0 +1,16 @@
+{% extends 'parent/base.html' %}
+
+{% block title %}
+    ویرایش اطلاعات
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h2>فرم ویرایش اطلاعات</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">ویرایش</button>
+        </form>
+    </div>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends 'parent/base.html' %}
+
+{% block title %}
+	search products
+{% endblock %}
+
+{% block content %}
+    {% if results %}
+                 <div class="container-list">
+        <div id="product-list">
+            {% for product in results %}
+                <div class="product-item">
+                    {% if product.images %}
+                        <a href="{{ product.get_absolute_url }}">
+                            <img src="{{ product.images.first.file.url }}" alt="{{ product.name }}">
+                        </a>
+                    {% endif %}
+                    <h3><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></h3>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    	{% else %}
+ <p id="empty-link">محصولی یافت نشد (<a href="{% url 'product:product_list' %}">بازگشت</a>)</p>
+    {% endif %}
+{% endblock %}

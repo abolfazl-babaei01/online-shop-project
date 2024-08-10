@@ -1,0 +1,30 @@
+
+<div class="header-container">
+    <div class="cart-container">
+        <span id="icon"><a href="{% url 'cart:cart_detail' %}">🎁</a></span>
+        <span id="item-count">[{{ cart|length }}] :</span>
+        <span id="total-price">({{ cart.get_total_price }})</span>
+    </div>
+    
+    <div class="search-container">
+        <form method="get" action="{% url 'product:search' %}">
+            <input type="text" name="q" placeholder="جستجو..." required>
+            <button type="submit">🔍</button>
+        </form>
+    </div>
+    
+    <div class="user-container">
+        {% if request.user.is_authenticated %}
+            <span><a id="user-name" href="{% url 'account:profile' %}">{{ request.user.first_name }}{% if not request.user.first_name %}
+                {{ request.user.phone|truncatewords:'4'  }}
+            {% endif %}  / </a> </span>
+            {% else %}
+            <span><a id="login" href="{% url 'account:login' %}">Login / </a></span>
+        {% endif %} 
+        {% if request.user.is_authenticated %}
+            <span> <a id="register" href="{% url 'account:logout' %}">logout</a></span>
+        {% else %}
+            <span> <a id="register" href="{% url 'account:register' %}">register</a></span>
+        {% endif %} 
+    </div>
+</div>

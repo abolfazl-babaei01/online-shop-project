@@ -1,0 +1,26 @@
+{% extends 'parent/base.html' %}
+
+
+
+{% block title %}
+
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+
+    <h2>تائید کد</h2>
+        {% include 'partials/messages.html' %}
+        <form method="post">
+
+            {% csrf_token %}
+
+            <input type="text" name="code" placeholder="کد تائید را وارد کنید">
+            <button type="submit"> تائید </button>
+        </form>
+    <div class="counter-counter" id="counter">10</div>
+    </div>
+
+
+
+{% endblock %}

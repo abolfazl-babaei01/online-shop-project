@@ -1,0 +1,16 @@
+{% extends 'parent/base.html' %}
+
+{% block title %}
+    verify_phone
+{% endblock %}
+
+
+{% block content %}
+    <div class="container">
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit"> ارسال کد </button>
+        </form>
+    </div>
+{% endblock %}

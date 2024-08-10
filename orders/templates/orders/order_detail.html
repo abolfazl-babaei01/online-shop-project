@@ -1,0 +1,47 @@
+{% extends 'parent/base.html' %}
+{% load filters %}
+{% block title %}
+    order detail
+{% endblock %}
+
+{% block content %}
+    <div class="order-detail-container">
+    <h2>جزئیات سفارش</h2>
+    <div class="order-info">
+        <p><strong>شماره سفارش :</strong> {{ order.id }}</p>
+        <p><strong>نام :</strong> {{ order.first_name }} {{ order.last_name }}</p>
+        <p><strong>تلفن :</strong> {{ order.phone }}</p>
+        <p><strong>استان :</strong> {{ order.province }}</p>
+        <p><strong>شهر :</strong> {{ order.city }}</p>
+        <p><strong>آدرس کامل :</strong> {{ order.address }}</p>
+        {% if not order.paid %}
+        	<p class="alert-info">سفارش پرداخت نشده</p>
+            {% else %}
+        	<p>سفارش پرداخت شده</p>
+        {% endif %}
+    </div>
+    <h3>محصولات سفارش داده شده</h3>
+    <div class="order-items">
+        {% for item in order.items.all %}
+            <div class="item">
+                <p><strong>محصول :</strong> {{ item.product.name }}</p>
+                <p><strong>قیمت :</strong> {{ item.price|three_digit_currency }}</p>
+                <p><strong>تعداد :</strong> {{ item.quantity }}</p>
+                {% if item.quantity > 1 %}
+                	<p><strong>جمع :</strong> {% multiply item.quantity item.price  %}</p>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+    <div class="order-costs">
+        <p><strong>هزینه کل :</strong> {{ order.get_total_cost|three_digit_currency }}</p>
+        <p><strong>هزینه پست :</strong> {{ order.get_post_cost|three_digit_currency }}</p>
+        <p><strong>هزینه نهایی :</strong> {{ order.get_final_cost|three_digit_currency }}</p>
+    </div>
+    <a href="{% url 'orders:generate_pdf' order.id %}" class="btn btn-primary">دانلود فاکتور(PDF)</a>
+</div>
+
+
+
+
+{% endblock %}

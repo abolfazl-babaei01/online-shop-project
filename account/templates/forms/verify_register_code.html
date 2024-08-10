@@ -1,0 +1,18 @@
+{% extends 'parent/base.html' %}
+
+{% block title %}
+    تایید
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h2>کد تایید را وارد نمایید</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">تایید</button>
+        </form>
+        <div class="counter-counter" id="counter">60</div>
+
+    </div>
+{% endblock %}

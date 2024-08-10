@@ -1,0 +1,121 @@
+{% extends 'parent/base.html' %}
+{% load filters %}
+{% block title %}
+    جزئیات سبد خرید
+{% endblock %}
+
+
+{% block content %}
+
+<div class="cart-detail-container">
+    {% if cart %}
+        {% for item in cart %}
+            <div class="item-detail-container" data-item-id="{{ item.product.id }}">
+                <img class="item-img" src="{{ item.product.images.last.file.url }}" alt="">
+                <h3 class="item-name">
+                    <a href="{% url 'product:product_detail' item.product.id item.product.slug %}">{{ item.product.name }}</a>
+                </h3>
+                <div class="cart-info-detail">
+                    <span id="item-quantity-{{ item.product.id }}">تعداد محصول: {{ item.quantity }}</span>
+                    <br>
+                    <span>قیمت هر محصول: {{ item.product.new_price|three_digit_currency }}</span>
+                    <br>
+                    <span id="item-total-{{ item.product.id }}">جمع کل: {{ item.total|three_digit_currency }}</span>
+                </div>
+                <div class="action-btn">
+                    <span class="increase">➕</span>
+                    <span class="decrease">➖</span>
+                    <span class="remove">❌</span>
+                </div>
+            </div>
+        {% endfor %}
+        <div class="cart-prices-info">
+            <span id="cart-total-price">جمع کل: {{ cart.get_total_price|three_digit_currency }}</span>
+            <br>
+            <span id="post-price">هزینه ارسال: {{ cart.get_post_price|three_digit_currency }}</span>
+            <br>
+            <span id="final-price">مبلغ قابل پرداخت: {{ cart.get_final_price|three_digit_currency }}</span>
+        </div>
+        <div class="buy-and-back">
+            <button type="button"><a href="{% url 'orders:verify_phone' %}">ادامه فرایند خرید</a></button>
+            <button type="button"><a href="{% url 'product:product_list' %}">بازگشت</a></button>
+        </div>
+    {% else %}
+        <p id="empty-link">سبد خرید شما خالی می‌باشد (<a href="{% url 'product:product_list' %}">بازگشت</a>)</p>
+    {% endif %}
+</div>
+
+
+{% endblock %}
+{% block scripts %}
+    <script>
+        $(document).ready(function () {
+            $('.increase').on('click', function () {
+
+                var itemId = $(this).closest('.item-detail-container').data('item-id');
+                updateQuantity(itemId, 'increase');
+            });
+
+            $('.decrease').on('click', function () {
+                var itemId = $(this).closest('.item-detail-container').data('item-id');
+                updateQuantity(itemId, 'decrease');
+            });
+
+            $('.remove').on('click', function () {
+                var itemId = $(this).closest('.item-detail-container').data('item-id');
+                removeItem(itemId);
+            })
+        });
+
+        function updateQuantity(itemId, action) {
+            $.ajax({
+                type: 'POST',
+                url: '{% url 'cart:update_quantity' %}',
+                data: {'item_id': itemId, 'action': action, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+                success: function (response) {
+                    if (response.success) {
+                        $('#item-count').text('[' + response.items_count + ']'+ ':');
+                        $('#total-price').text('(' + response.total_price + ')' );
+                        $('#item-quantity-' + itemId).text('تعداد محصول: ' + response.quantity);
+                        $('#item-total-' + itemId).text('جمع کل: ' + response.total.toLocaleString('en-US') + ' تومان');
+                        $('#cart-total-price').text(' جمع کل :' + response.total_price.toLocaleString('en-US') + 'تومان')
+                        $('#post-price').text('هزینه ارسال :' + response.post_price.toLocaleString('en-US') + 'تومان')
+                        $('#final-price').text(' مبلغ قابل پرداخت :' + response.final_price.toLocaleString('en-US') + 'تومان')
+
+                    }
+                }
+            })
+        };
+
+        function removeItem(itemId) {
+            $.ajax({
+                type: 'POST',
+                url: '{% url 'cart:remove_item' %}',
+                data: {'item_id': itemId, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+                success: function (response) {
+                    if (response.success) {
+                        $('#item-count').text('[' + response.items_count + ']');
+                        $('#total-price').text('(' + response.total_price + ')');
+                        $('#cart-total-price').text(' جمع کل :' + response.total_price.toLocaleString('en-US') + 'تومان')
+                        $('#post-price').text('هزینه ارسال :' + response.post_price.toLocaleString('en-US') + 'تومان')
+                        $('#final-price').text(' مبلغ قابل پرداخت :' + response.final_price.toLocaleString('en-US') + 'تومان')
+                        $(`.item-detail-container[data-item-id=${itemId}]`).remove();
+
+                    }
+                    if (response.empty_cart === true){
+                        $('#cart-total-price').remove()
+                        $('#post-price').remove()
+                        $('#final-price').remove()
+                        $('hr').remove()
+
+
+
+
+                    }
+
+
+                }
+            })
+        }
+    </script>
+{% endblock %}

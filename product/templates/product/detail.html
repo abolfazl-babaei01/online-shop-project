@@ -1,0 +1,170 @@
+{% extends 'parent/base.html' %}
+
+{% block title %}
+    جزئیات {{ product.name }}
+{% endblock %}
+
+
+{% block content %}
+    <div class="container-detail">
+        <div class="product-header">
+            <h3>جزئیات {{ product.name }}</h3>
+        </div>
+
+        <div class="product-images">
+            {% if product.images %}
+                {% for image in product.images.all %}
+                    <img src="{{ image.file.url }}" alt="تصویر محصول">
+                {% endfor %}
+            {% endif %}
+        </div>
+
+        <div class="product-details">
+            <p>قیمت : <span class="price">{{ product.price }}</span></p>
+            <p>تخفیف : <span class="discount">{{ product.off }}</span></p>
+            <p>قیمت جدید : {{ product.new_price }}</p>
+            <p>وزن : {{ product.weight }} گرم</p>
+        </div>
+
+        <hr>
+
+        <div class="product-description">
+            <h4>توضیحات :</h4>
+            <p>{{ product.description }}</p>
+        </div>
+
+        <div class="features">
+            {% if product.futures.all %}
+                <h4>ویژگی‌ها:</h4>
+                {% for future in product.futures.all %}
+                    <p>{{ future.name }} : {{ future.value }}</p>
+                {% endfor %}
+            {% endif %}
+        </div>
+
+        <div class="buttons">
+            {% if product.inventory > 0 %}
+                <button type="button" id="add-to-cart">
+                    افزودن به سبد خرید
+                </button>
+            {% else %}
+                <p class="nothing">ناموجود</p>
+            {% endif %}
+            <button id="like-product">
+                {% if request.user in product.likes.all %}
+                    افزودن به علاقه مندی ها
+                {% else %}
+                    حذف از علاقه مندی ها
+                {% endif %}
+            </button>
+
+        </div>
+
+        {% if request.user.is_authenticated %}
+            <div class="comment-form">
+                <h4>ثبت دیدگاه</h4>
+                <form method="post" id="comment-form">
+                    {% csrf_token %}
+                    <input id="c-title" type="text" name="title" placeholder="عنوان دیدگاه" required>
+                    <textarea id='c-text' name="body" rows="5" placeholder="متن دیدگاه" required></textarea>
+                    <input type="submit" value="ارسال دیدگاه">
+                </form>
+            </div>
+        {% else %}
+            <div class="comment-form">
+                <p class="alert">برای ثبت دیدگاه می بایست <a href="{% url 'account:login' %}?next={{ request.path }}">وارد</a> شوید</p>
+            </div>
+        {% endif %}
+
+
+            <div class="comments">
+                <h4>دیدگاه کاربران</h4>
+                {% for comment in product.comments.all %}
+                    <div class="comment">
+                        <p><strong>{{ comment.title }}</strong></p>
+                        <p>{{ comment.text }}</p>
+                        <p><small>توسط {{ comment.user.first_name }} در {{ comment.created|date:'d-m-Y' }}</small>
+                        </p>
+                        <hr>
+                    </div>
+                {% endfor %}
+            </div>
+           {% if not product.comments.all %}
+<p id="no-comment" class="alert-info">هنوز دیدگاهی ثبت نشده</p>
+
+           {% endif %}
+
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        $(document).ready(function () {
+            $('#add-to-cart').click(function () {
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'cart:add_to_cart' product_id=product.id %}",
+                    data: {'csrfmiddlewaretoken': '{{ csrf_token }}'},
+                    success: function (data) {
+                        $('#item-count').text('[' + data.items_count + ']');
+                        $('#total-price').text('(' + data.total_price + ')');
+                    }
+                })
+            });
+
+            $('#like-product').click(function () {
+                const button = $(this);
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'product:like_product' product_id=product.id %}",
+                    data: {'csrfmiddlewaretoken': '{{ csrf_token }}'},
+                    success: function (data) {
+
+                        if (data.liked) {
+                            button.text('حذف از علاقه مندی ها');
+                        } else {
+                            button.text('افزودن به علاقه مندی ها');
+                        }
+                    }
+                });
+            });
+
+            $('#comment-form').on('submit', function (e) {
+                e.preventDefault();
+
+                var commentTitle = $('#c-title').val();
+                var commentText = $("#c-text").val();
+                $.ajax({
+                    type: 'POST',
+                    url: {% url 'product:add_comment' %},
+                    data: {
+                        'product_id': {{ product.id }},
+                        'title': commentTitle,
+                        'text': commentText,
+                        'csrfmiddlewaretoken': '{{ csrf_token }}'
+                    },
+                    success: function (data) {
+                        if (data.success) {
+                            $('#c-title').val('');
+                            $("#c-text").val('');
+                            $("#no-comment").remove();
+                            console.log(data)
+
+                            var newComment = `
+                            <div class="comment">
+                                <p><strong>${data.comment.title}</strong></p>
+                                <p>${data.comment.text}</p>
+                                <p><small>توسط ${data.comment.first_name} در ${data.comment.created} </small></p>
+                                <hr>
+                            </div>
+                            `
+                            $('.comments').append(newComment)
+                        } else if (!data.success) {
+                            window.location.href = '/account/login'
+                        }
+                    }
+                })
+            })
+        });
+    </script>
+{% endblock %}

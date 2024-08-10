@@ -1,0 +1,37 @@
+{% load static %}
+<footer>
+    <div class="footer-container">
+        <div class="footer-section">
+            <div class="logo-container">
+                <img src="{% static 'images/symbol-01.png' %}" alt="لوگو ۱">
+                <img src="{% static 'images/symbol-02.png'%}" alt="لوگو ۲">
+            </div>
+            <div class="newsletter-container">
+                <h3>ما را دنبال کنید</h3>
+                <p>برای دریافت آخرین اخبار و آخرها ایمیل خود را وارد کنید.</p>
+                <form action="#">
+                    <input type="email" placeholder="ایمیل خود را وارد کنید">
+                    <button type="submit">ارسال</button>
+                </form>
+            </div>
+            <div class="contact-container">
+                <h3>ارتباط مستقیم</h3>
+                <p>تهران، تهران</p>
+                <p>example@gmail.com</p>
+                <p>09123456784</p>
+            </div>
+            <div class="links-container">
+                <h3>دسترسی سریع</h3>
+                <ul>
+                    <li><a href="#">تعرفه ها</a></li>
+                    <li><a href="#">سوالات متداول</a></li>
+                    <li><a href="#">تماس با ما</a></li>
+                    <li><a href="#">درباره ما</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>تمامی حقوق محفوظ است 2024</p>
+        </div>
+    </div>
+</footer>

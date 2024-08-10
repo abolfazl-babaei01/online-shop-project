@@ -1,0 +1,60 @@
+{% extends 'parent/base.html' %}
+{% load filters %}
+{% block title %}
+    پروفایل
+{% endblock %}
+
+
+{% block content %}
+
+    <div class="container-profile">
+        <div class="header">
+            <h1>پیشخوان</h1>
+        </div>
+        <div class="nav">
+            <a href="{% url 'account:logout' %}">خروج</a>
+            <a href="{% url 'account:change_password' %}">تغییر رمز عبور</a>
+            <a href="{% url 'account:update_profile' %}">بروزرسانی پروفایل</a>
+            <a href="{% url 'orders:order_list' %}">لیست سفارشات</a>
+        </div>
+
+
+        {% if user.likes.all %}
+            <div class="product-list">
+                <h2>محصولات مورد علاقه شما</h2>
+                {% for product in user.likes.all %}
+                    <div class="product">
+                        {% if product.images %}
+                            <a href="#">
+                                <img src="{{ product.images.first.file.url }}" alt="picture">
+                            </a>
+                        {% endif %}
+                        <h3><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></h3>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+
+        {% last_order request.user as last_orders %}
+        {% if user.orders.all %}
+
+            <div class="order-list-container">
+                <h2>آخرین سفارش‌ها</h2>
+                {% for order in last_orders %}
+                    <div class="order-item">
+                        <h3>سفارش #{{ order.id }}</h3>
+                        <p><strong>نام :</strong> {{ order.first_name }} {{ order.last_name }}</p>
+                        <p><strong>تلفن :</strong> {{ order.phone }}</p>
+                        <p><strong>استان :</strong> {{ order.province }}</p>
+                        <a href="{% url 'orders:order_detail' order_id=order.id %}" class="order-detail-link">جزئیات
+                            سفارش</a>
+                    </div>
+                    <hr>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+    </div>
+
+{% endblock %}

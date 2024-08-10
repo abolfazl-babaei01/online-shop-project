@@ -1,0 +1,23 @@
+{% extends 'parent/base.html' %}
+
+{% block title %}
+	orders
+{% endblock %}
+
+{% block content %}
+   <div class="order-list-container">
+    <h2>لیست سفارش‌ها</h2>
+    {% for order in orders %}
+        <div class="order-item">
+            <h3>سفارش #{{ order.id }}</h3>
+            <p><strong>نام :</strong> {{ order.first_name }} {{ order.last_name }}</p>
+            <p><strong>تلفن :</strong> {{ order.phone }}</p>
+            <p><strong>استان :</strong> {{ order.province }}</p>
+            <a href="{% url 'orders:order_detail' order_id=order.id %}" class="order-detail-link">جزئیات سفارش</a>
+        </div>
+        <hr>
+    {% endfor %}
+</div>
+
+
+{% endblock %}
