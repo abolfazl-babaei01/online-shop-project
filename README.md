@@ -3,10 +3,10 @@
 This is a Django online shop allowing users to browse, search, and purchase products. It includes features like product categories, user authentication, shopping cart, and order management.
 
 ## Key Features
-- **User Authentication**: Secure user registration and login system with one-time password (OTP) verification for enhanced security. -
--  **Product Management**: Dynamic product catalog with search and filter functionalities. -
--  **Shopping Cart**: Users can add/remove products to/from their shopping cart and view the cart summary. -
--  **Order Processing**: Complete order management system with detailed order summaries and invoice generation in PDF format. -
+- **User Authentication**: Secure user registration and login system with one-time password (OTP) verification for enhanced security.
+-  **Product Management**: Dynamic product catalog with search and filter functionalities.
+-  **Shopping Cart**: Users can add/remove products to/from their shopping cart and view the cart summary.
+-  **Order Processing**: Complete order management system with detailed order summaries and invoice generation in PDF format.
 -  **AJAX-powered Likes and Comments**: Users can like products and leave comments, all managed through AJAX for a seamless user experience.
 
 
