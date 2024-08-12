@@ -52,9 +52,9 @@
             {% endif %}
             <button id="like-product">
                 {% if request.user in product.likes.all %}
-                    افزودن به علاقه مندی ها
-                {% else %}
                     حذف از علاقه مندی ها
+                {% else %}
+                    افزودن به علاقه مندی ها
                 {% endif %}
             </button>
 
