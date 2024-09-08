@@ -1,8 +1,10 @@
+import string
+
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
 from .forms import RegisterModelForm, LoginForm, ChangePasswordForm, UpdateProfileForm, ForgetPasswordForm, \
-    CodeVerificationForm
+    CodeVerificationForm, OtpLoginForm
 from .models import ShopUser
 from utils.KaveSms import send_sms_normal, send_sms_with_template
 import random
@@ -12,14 +14,8 @@ import time
 import json
 
 
+
 # Create your views here.
-
-class DateTimeEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, datetime):
-            return obj.isoformat()
-        return super(DateTimeEncoder, self).default(obj)
-
 
 def register(request):
     if request.method == 'POST':
@@ -92,6 +88,54 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return redirect('product:index')
+
+
+def otp_login(request):
+    if request.method == 'POST':
+        form = OtpLoginForm(request.POST)
+        if form.is_valid():
+            phone = form.cleaned_data['phone']
+            user = ShopUser.objects.filter(phone=phone).first()
+            if user is not None:
+                tokens = {'token': ''.join(random.choices('0123456789', k=6))}
+                request.session['verification_token'] = tokens['token']
+                request.session['user_phone'] = phone
+                request.session['token_time'] = datetime.now().isoformat()
+                # send_sms_with_template(receptor=phone, tokens=tokens, template='your template')
+                print(tokens['token'])
+                return redirect('account:verify_otp_login')
+            else:
+                form.add_error('phone', 'شماره تلفن وارد شده نا معتبر می باشد')
+
+
+    else:
+        form = OtpLoginForm()
+    return render(request, 'forms/otp_login.html', {'form': form})
+
+
+def verify_otp_login(request):
+    if request.method == 'POST':
+        form = CodeVerificationForm(request.POST)
+        if form.is_valid():
+            code = form.cleaned_data['code']
+            token_time = request.session['token_time']
+            current_time = datetime.now()
+            token_generation_time = datetime.fromisoformat(token_time)
+            if current_time - token_generation_time > timedelta(seconds=60):
+                form.add_error('code', 'کد تایید اعتبار ندارد')
+            elif code == request.session['verification_token']:
+                phone = request.session['user_phone']
+                user = ShopUser.objects.filter(phone=phone).first()
+                login(request, user)
+                del request.session['verification_token']
+                del request.session['user_phone']
+                del request.session['token_time']
+                return redirect('product:index')
+            else:
+                form.add_error('code', 'کد تایید اشتیاه می باشد')
+    else:
+        form = CodeVerificationForm()
+    return render(request, 'forms/verify_otp_login.html', {'form': form})
 
 
 def change_password(request):

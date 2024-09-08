@@ -1,0 +1,17 @@
+{% extends 'parent/base.html' %}
+
+{% block title %}
+	otp login
+{% endblock %}
+
+{% block content %}
+	<div class="container">
+        <h2>ورود با کد یک بار مصرف</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">ارسال کد تائید</button>
+        </form>
+
+    </div>
+{% endblock %}

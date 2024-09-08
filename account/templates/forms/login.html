@@ -10,6 +10,7 @@
         <form method="post">
             {% csrf_token %}
             {{ form.as_p }}
+            <a href="{% url 'account:otp_login' %}">ورود با کد یک بار مصرف</a>
             <a href="{% url 'account:forget_password' %}">کلمه عبور را فراموش کردم !</a>
             <a href="{% url 'account:register' %}"> حساب کاربری ندارم</a>
             <button type="submit">ورود</button>

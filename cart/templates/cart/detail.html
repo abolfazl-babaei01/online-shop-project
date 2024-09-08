@@ -35,11 +35,17 @@
             <span id="post-price">هزینه ارسال: {{ cart.get_post_price|three_digit_currency }}</span>
             <br>
             <span id="final-price">مبلغ قابل پرداخت: {{ cart.get_final_price|three_digit_currency }}</span>
+            <br>
+            {% if total_price_after_discount %}
+            	<span>مبلغ کل پس از تخفیف: {{ total_price_after_discount|three_digit_currency  }}</span>
+            {% endif %}
         </div>
         <div class="buy-and-back">
             <button type="button"><a href="{% url 'orders:verify_phone' %}">ادامه فرایند خرید</a></button>
             <button type="button"><a href="{% url 'product:product_list' %}">بازگشت</a></button>
         </div>
+
+
     {% else %}
         <p id="empty-link">سبد خرید شما خالی می‌باشد (<a href="{% url 'product:product_list' %}">بازگشت</a>)</p>
     {% endif %}

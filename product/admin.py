@@ -14,6 +14,7 @@ class FutureInline(admin.TabularInline):
     model = ProductFuture
     extra = 0
 
+
 class CommentInline(admin.TabularInline):
     model = Comment
     extra = 0
@@ -38,3 +39,6 @@ class ProductAdmin(admin.ModelAdmin):
 class CommentAdmin(admin.ModelAdmin):
     list_display = ['title', 'product', 'is_accepted']
     list_editable = ['is_accepted']
+
+
+

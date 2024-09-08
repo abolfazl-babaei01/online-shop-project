@@ -81,6 +81,10 @@ class LoginForm(forms.Form):
     password = forms.CharField(max_length=15, widget=forms.PasswordInput, label='کلمه عبور')
 
 
+class OtpLoginForm(forms.Form):
+    phone = forms.CharField(max_length=11, label='شماره تلفن')
+
+
 class ChangePasswordForm(forms.Form):
     old_password = forms.CharField(max_length=15, widget=forms.PasswordInput, label='کلمه عبور فعلی')
     password1 = forms.CharField(max_length=15, widget=forms.PasswordInput, label='کلمه عبور جدید')
