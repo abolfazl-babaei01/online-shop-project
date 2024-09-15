@@ -64,7 +64,11 @@ class Cart:
         products = Product.objects.filter(id__in=product_ids)
         cart_dict = self.cart.copy()
         for product in products:
-            cart_dict[str(product.id)]['product'] = product
+            cart_dict[str(product.id)]['product_id'] = product.id
+            cart_dict[str(product.id)]['product_images_last_file_url'] = str(product.images.last().file.url)
+            cart_dict[str(product.id)]['product_name'] = product.name
+            cart_dict[str(product.id)]['product_new_price'] = product.new_price
+            cart_dict[str(product.id)]['product_get_absolute_url'] = product.get_absolute_url()
 
         for item in cart_dict.values():
             item['total'] = item['quantity'] * item['price']

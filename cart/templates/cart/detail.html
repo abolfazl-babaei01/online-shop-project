@@ -10,17 +10,17 @@
 <div class="cart-detail-container">
     {% if cart %}
         {% for item in cart %}
-            <div class="item-detail-container" data-item-id="{{ item.product.id }}">
-                <img class="item-img" src="{{ item.product.images.last.file.url }}" alt="">
+            <div class="item-detail-container" data-item-id="{{ item.product_id }}">
+                <img class="item-img" src="{{ item.product_images_last_file_url }}" alt="">
                 <h3 class="item-name">
-                    <a href="{% url 'product:product_detail' item.product.id item.product.slug %}">{{ item.product.name }}</a>
+                    <a href="{{ item.product_get_absolute_url }}">{{ item.product_name }}</a>
                 </h3>
                 <div class="cart-info-detail">
-                    <span id="item-quantity-{{ item.product.id }}">تعداد محصول: {{ item.quantity }}</span>
+                    <span id="item-quantity-{{ item.product_id }}">تعداد محصول: {{ item.quantity }}</span>
                     <br>
-                    <span>قیمت هر محصول: {{ item.product.new_price|three_digit_currency }}</span>
+                    <span>قیمت هر محصول: {{ item.product_new_price|three_digit_currency }}</span>
                     <br>
-                    <span id="item-total-{{ item.product.id }}">جمع کل: {{ item.total|three_digit_currency }}</span>
+                    <span id="item-total-{{ item.product_id }}">جمع کل: {{ item.total|three_digit_currency }}</span>
                 </div>
                 <div class="action-btn">
                     <span class="increase">➕</span>
@@ -36,16 +36,25 @@
             <br>
             <span id="final-price">مبلغ قابل پرداخت: {{ cart.get_final_price|three_digit_currency }}</span>
             <br>
-            {% if total_price_after_discount %}
-            	<span>مبلغ کل پس از تخفیف: {{ total_price_after_discount|three_digit_currency  }}</span>
-            {% endif %}
+
         </div>
         <div class="buy-and-back">
             <button type="button"><a href="{% url 'orders:verify_phone' %}">ادامه فرایند خرید</a></button>
             <button type="button"><a href="{% url 'product:product_list' %}">بازگشت</a></button>
         </div>
 
+    <form method="post" action="{% url 'cart:cart_detail' %}">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" name="apply_coupon"> اعمال فیلتر</button>
+</form>
+{% if coupon %}
+    <p>کد تخفیف اعمال شده: {{ coupon.code }}</p>
+    <p>تخفیف: {{ discount }}</p>
 
+            	<span>مبلغ کل پس از تخفیف: {{ total_price_after_discount|three_digit_currency  }}</span>
+
+{% endif %}
     {% else %}
         <p id="empty-link">سبد خرید شما خالی می‌باشد (<a href="{% url 'product:product_list' %}">بازگشت</a>)</p>
     {% endif %}

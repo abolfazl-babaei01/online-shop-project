@@ -26,54 +26,58 @@ def add_to_cart(request, product_id):
         return JsonResponse({'status': 'Invalid Request'})
 
 
+def cart_detail(request):
+    cart = Cart(request)
+    form = CouponApplyForm()
+    coupon = None
+    discount = 0
+    total_price_after_discount = None
+
+    if 'apply_coupon' in request.POST:
+        form = CouponApplyForm(request.POST)
+        if form.is_valid():
+            code = form.cleaned_data['code']
+            try:
+                coupon = Coupon.objects.filter(code=code, active=True, valid_from__lte=timezone.now(),
+                                               valid_to__gte=timezone.now()).first()
+                request.session['coupon_id'] = coupon.id
+            except Exception as e:
+                form.add_error('code', 'کد تخفیف نامعتبر میباشد ')
+                print(f'line 45 {e}')
+                request.session['coupon_id'] = None
+
+    if 'coupon_id' in request.session.keys():
+        try:
+            coupon = Coupon.objects.get(id=request.session['coupon_id'])
+            discount = coupon.discount
+        except Exception as e:
+            print(f'line 53 {e}')
+
+    try:
+        cart_final_price = cart.get_final_price()
+        discount_amount = cart_final_price * coupon.discount
+        total_price_after_discount = cart_final_price - discount_amount
+    except Exception as e:
+        print(f'line 60 {e}')
+    context = {
+        'cart': cart,
+        'form': form,
+        'coupon': coupon,
+        'discount': discount,
+        'total_price_after_discount': total_price_after_discount,
+    }
+    return render(request, 'cart/detail.html', context)
+
+
 # def cart_detail(request):
+#
+#
 #     cart = Cart(request)
-#     form = CouponApplyForm()
-#     coupon = None
-#     discount = 0
-#     total_price_after_discount = None
-#
-#     if 'apply_coupon' in request.POST:
-#         form = CouponApplyForm(request.POST)
-#         if form.is_valid():
-#             code = form.cleaned_data['code']
-#             try:
-#                 coupon = Coupon.objects.filter(code=code, active=True, valid_from__lte=timezone.now(),
-#                                                valid_to__gte=timezone.now()).first()
-#                 request.session['coupon_id'] = coupon.id
-#             except Exception as e:
-#                 print(f'line 45 {e}')
-#                 request.session['coupon_id'] = None
-#
-#     if 'coupon_id' in request.session.keys():
-#         try:
-#             coupon = Coupon.objects.get(id=request.session['coupon_id'])
-#             discount = coupon.discount
-#         except Exception as e:
-#             print(f'line 53 {e}')
-#
-#     try:
-#         cart_final_price = cart.get_final_price()
-#         discount_amount = cart_final_price * coupon.discount
-#         total_price_after_discount = cart_final_price - discount_amount
-#     except Exception as e:
-#         print(f'line 60 {e}')
 #     context = {
 #         'cart': cart,
-#         'form': form,
-#         'coupon': coupon,
-#         'discount': discount,
-#         'total_price_after_discount': total_price_after_discount,
 #     }
 #     return render(request, 'cart/detail.html', context)
 
-
-def cart_detail(request):
-    cart = Cart(request)
-    context = {
-        'cart': cart,
-    }
-    return render(request, 'cart/detail.html', context)
 
 @require_POST
 def update_quantity(request):

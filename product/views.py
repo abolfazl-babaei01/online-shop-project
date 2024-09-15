@@ -55,7 +55,7 @@ def product_detail(request, pk, slug):
     context = {
         'product': product
     }
-    return render(request, 'product/detail.html', context)
+    return render(request, 'product/product_detail.html', context)
 
 
 @login_required

@@ -6,7 +6,7 @@ register = template.Library()
 
 @register.filter
 def three_digit_currency(value):
-    return f'{value:,} تومان '
+    return f'{int(value):,} تومان '
 
 
 @register.simple_tag
