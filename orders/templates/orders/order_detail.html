@@ -37,6 +37,9 @@
         <p><strong>هزینه کل :</strong> {{ order.get_total_cost|three_digit_currency }}</p>
         <p><strong>هزینه پست :</strong> {{ order.get_post_cost|three_digit_currency }}</p>
         <p><strong>هزینه نهایی :</strong> {{ order.get_final_cost|three_digit_currency }}</p>
+        {% if order.final_cost_with_discount %}
+        	<p><strong>هزینه نهایی با تخفیف :</strong> {{ order.final_cost_with_discount }}</p>
+        {% endif %}
     </div>
     <a href="{% url 'orders:generate_pdf' order.id %}" class="btn btn-primary">دانلود فاکتور(PDF)</a>
 </div>

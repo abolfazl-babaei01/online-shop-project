@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login
 from account.models import ShopUser
 from .models import Order, OrderItem
@@ -8,6 +8,7 @@ from .forms import PhoneVerificationForm, OrderForm
 import random
 from string import ascii_letters, digits
 from cart.cart import Cart
+from cart.models import Coupon
 from django.http import HttpResponse
 from reportlab.pdfgen import canvas
 from reportlab.pdfbase.ttfonts import TTFont
@@ -79,9 +80,19 @@ def create_order(request):
             order.buyer = request.user
             order.save()
             for item in cart:
-                OrderItem.objects.create(order=order, product=item['product'], quantity=item['quantity'],
+                OrderItem.objects.create(order=order, product_id=item['product_id'], quantity=item['quantity'],
                                          price=item['price'], weight=item['weight'])
             cart.clear()
+            if 'coupon_id' in request.session.keys():
+                try:
+                    coupon = get_object_or_404(Coupon, pk=request.session['coupon_id'])
+                    discount_amount = order.get_final_cost() * coupon.discount
+                    discount = order.get_final_cost() - discount_amount
+                    order.final_cost_with_discount = discount
+                    order.save()
+                except Exception as e:
+                    print(e)
+                    del request.session['coupon_id']
             return redirect('product:product_list')
     else:
         form = OrderForm()

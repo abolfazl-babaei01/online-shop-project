@@ -14,6 +14,7 @@ class Order(models.Model):
     postal_code = models.CharField(max_length=10, verbose_name='کد پستی')
     province = models.CharField(max_length=50, verbose_name='استان')
     city = models.CharField(max_length=50, verbose_name='شهر')
+    final_cost_with_discount = models.PositiveIntegerField(null=True, blank=True, verbose_name='هزینه نهایی با تخفیف')
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     paid = models.BooleanField(default=False)

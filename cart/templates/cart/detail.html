@@ -46,7 +46,7 @@
     <form method="post" action="{% url 'cart:cart_detail' %}">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit" name="apply_coupon"> اعمال فیلتر</button>
+    <button type="submit" name="apply_coupon"> اعمال کد تخفیف</button>
 </form>
 {% if coupon %}
     <p>کد تخفیف اعمال شده: {{ coupon.code }}</p>
